@@ -1,102 +1,3 @@
-CREATE PROCEDURE app.insere_usuario
-(
-	@username VARCHAR(64),
-	@password VARCHAR(64),
-	@id_usuario INT OUTPUT
-) 
-AS BEGIN
-	INSERT INTO pi_app_react.app.usuario VALUES
-	(@username, @password);
-
-	SELECT @id_usuario = MAX(pi_app_react.app.usuario.id_usuario) 
-	FROM pi_app_react.app.usuario
-	
-	RETURN
-END
-GO
-
-CREATE PROCEDURE app.insere_pessoa
-(
-	@username VARCHAR(64),
-	@password VARCHAR(64),
-	@primeiro_nome VARCHAR(64),
-	@ultimo_nome VARCHAR(64),
-	@cpf VARCHAR(64),
-	@dta_nascimento DATE,
-	@endereco VARCHAR(128),
-	@email VARCHAR(128),
-	@telefone VARCHAR(32),
-	@id_pessoa INT = NULL OUTPUT
-) 
-AS BEGIN TRY
-	BEGIN TRANSACTION
-		DECLARE @id_novo_usuario INT;
-		EXEC pi_app_react.app.insere_usuario @username, @password, @id_novo_usuario OUTPUT
-		INSERT INTO pi_app_react.app.pessoa VALUES(
-			@id_novo_usuario, 
-			@primeiro_nome, 
-			@ultimo_nome, 
-			@cpf, 
-			@dta_nascimento, 
-			@endereco, 
-			@email, 
-			@telefone
-		 )
-	
-		SELECT @id_pessoa = MAX(pi_app_react.app.pessoa.id_pessoa)
-		FROM pi_app_react.app.pessoa
-	COMMIT
-END TRY
-BEGIN  CATCH
-	IF @@TRANCOUNT > 0 ROLLBACK
-
-	DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(), 
-			@ErrorSeverity INT = ERROR_SEVERITY();
-	RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
-END CATCH
-GO
-
-CREATE PROCEDURE app.insere_empresa
-(
-	@username VARCHAR(64),
-	@password VARCHAR(64),
-	@sigla VARCHAR(16),
-	@nome VARCHAR(64),
-	@des_empresa VARCHAR(64),
-	@cnpj VARCHAR(64),
-	@tipo_empresa VARCHAR(24),
-	@endereco VARCHAR(128),
-	@email VARCHAR(128),
-	@telefone VARCHAR(32),
-	@id_empresa INT = NULL OUTPUT
-)
-AS BEGIN TRY
-	BEGIN TRANSACTION
-		DECLARE @id_novo_usuario INT;
-		EXEC pi_app_react.app.insere_usuario @username, @password, @id_novo_usuario OUTPUT
-		INSERT INTO pi_app_react.app.empresa VALUES(
-			@id_novo_usuario,
-			@sigla,
-			@nome,
-			@des_empresa,
-			@cnpj,
-			@tipo_empresa,
-			@endereco,
-			@email,
-			@telefone
-		)
-	
-		SELECT @id_empresa = MAX(pi_app_react.app.empresa.id_empresa)
-		FROM pi_app_react.app.empresa
-	COMMIT
-END TRY
-BEGIN CATCH
-	IF @@TRANCOUNT > 0 ROLLBACK
-	DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(), 
-			@ErrorSeverity INT = ERROR_SEVERITY();
-	RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
-END CATCH
-GO
 
 CREATE PROCEDURE app.insere_servico 
 (
@@ -126,23 +27,6 @@ AS BEGIN TRY
 			
 		)
 	COMMIT
-END TRY
-BEGIN CATCH
-	IF @@TRANCOUNT > 0 ROLLBACK
-	DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(), 
-			@ErrorSeverity INT = ERROR_SEVERITY();
-	RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
-END CATCH
-GO
-
-CREATE PROCEDURE app.insere_categoria
-(
-	@nome VARCHAR(64),
-	@des_categoria VARCHAR(256)
-)
-AS BEGIN TRY
-	INSERT INTO pi_app_react.app.categoria VALUES
-	(@nome, @des_categoria)
 END TRY
 BEGIN CATCH
 	IF @@TRANCOUNT > 0 ROLLBACK
@@ -355,6 +239,43 @@ BEGIN CATCH
 END CATCH
 GO
 
+
+CREATE PROCEDURE app.insere_categoria
+(
+	@nome VARCHAR(64),
+	@des_categoria VARCHAR(256)
+)
+AS BEGIN TRY
+	INSERT INTO pi_app_react.app.categoria VALUES
+	(@nome, @des_categoria)
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0 ROLLBACK
+	DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(), 
+			@ErrorSeverity INT = ERROR_SEVERITY();
+	RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH
+GO
+
+
+CREATE PROCEDURE app.insere_usuario
+(
+	@username VARCHAR(64),
+	@password VARCHAR(64),
+	@id_usuario INT OUTPUT
+) 
+AS BEGIN
+	INSERT INTO pi_app_react.app.usuario VALUES
+	(@username, @password);
+
+	SELECT @id_usuario = MAX(pi_app_react.app.usuario.id_usuario) 
+	FROM pi_app_react.app.usuario
+	
+	RETURN
+END
+GO
+
+
 CREATE PROCEDURE app.insere_mensagem 
 (
 	@username_pessoa VARCHAR(64),
@@ -393,6 +314,91 @@ BEGIN CATCH
 	RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
 END CATCH
 GO
+
+
+CREATE PROCEDURE app.insere_pessoa
+(
+	@username VARCHAR(64),
+	@password VARCHAR(64),
+	@primeiro_nome VARCHAR(64),
+	@ultimo_nome VARCHAR(64),
+	@cpf VARCHAR(64),
+	@dta_nascimento DATE,
+	@endereco VARCHAR(128),
+	@email VARCHAR(128),
+	@telefone VARCHAR(32),
+	@id_pessoa INT = NULL OUTPUT
+) 
+AS BEGIN TRY
+	BEGIN TRANSACTION
+		DECLARE @id_novo_usuario INT;
+		EXEC pi_app_react.app.insere_usuario @username, @password, @id_novo_usuario OUTPUT
+		INSERT INTO pi_app_react.app.pessoa VALUES(
+			@id_novo_usuario, 
+			@primeiro_nome, 
+			@ultimo_nome, 
+			@cpf, 
+			@dta_nascimento, 
+			@endereco, 
+			@email, 
+			@telefone
+		 )
+	
+		SELECT @id_pessoa = MAX(pi_app_react.app.pessoa.id_pessoa)
+		FROM pi_app_react.app.pessoa
+	COMMIT
+END TRY
+BEGIN  CATCH
+	IF @@TRANCOUNT > 0 ROLLBACK
+
+	DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(), 
+			@ErrorSeverity INT = ERROR_SEVERITY();
+	RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH
+GO
+
+CREATE PROCEDURE app.insere_empresa
+(
+	@username VARCHAR(64),
+	@password VARCHAR(64),
+	@sigla VARCHAR(16),
+	@nome VARCHAR(64),
+	@des_empresa VARCHAR(64),
+	@cnpj VARCHAR(64),
+	@tipo_empresa VARCHAR(24),
+	@endereco VARCHAR(128),
+	@email VARCHAR(128),
+	@telefone VARCHAR(32),
+	@id_empresa INT = NULL OUTPUT
+)
+AS BEGIN TRY
+	BEGIN TRANSACTION
+		DECLARE @id_novo_usuario INT;
+		EXEC pi_app_react.app.insere_usuario @username, @password, @id_novo_usuario OUTPUT
+		INSERT INTO pi_app_react.app.empresa VALUES(
+			@id_novo_usuario,
+			@sigla,
+			@nome,
+			@des_empresa,
+			@cnpj,
+			@tipo_empresa,
+			@endereco,
+			@email,
+			@telefone
+		)
+	
+		SELECT @id_empresa = MAX(pi_app_react.app.empresa.id_empresa)
+		FROM pi_app_react.app.empresa
+	COMMIT
+END TRY
+BEGIN CATCH
+	IF @@TRANCOUNT > 0 ROLLBACK
+	DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE(), 
+			@ErrorSeverity INT = ERROR_SEVERITY();
+	RAISERROR(@ErrorMessage, @ErrorSeverity, 1);
+END CATCH
+GO
+
 
 -- \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ PROCS DE SELECTS  \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ \\ ~~ \\
 
