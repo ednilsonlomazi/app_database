@@ -518,7 +518,7 @@ END CATCH
 
 -- \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ PROCS DE UPDATES  \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ \\ ~~ \\ \\ ~~ \\
 
-ALTER PROCEDURE app.update_pessoa 
+CREATE PROCEDURE app.update_pessoa 
 (
 	@id_pessoa INT,
 	@username VARCHAR(64),
