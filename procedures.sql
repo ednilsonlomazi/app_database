@@ -456,8 +456,8 @@ AS BEGIN TRY
 			INNER JOIN pi_app_react.app.usuario u
 				ON u.id_usuario = e.id_usuario
 		WHERE 1 = 1
-			AND u.username = 'empresa1'
-			AND s.status = 'pago'
+			AND u.username = @username
+			AND s.status = @status
 	COMMIT
 END TRY
 BEGIN CATCH
